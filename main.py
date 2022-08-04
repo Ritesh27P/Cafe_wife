@@ -1,23 +1,18 @@
-from flask import Flask, render_template
-import sqlalchemy as db
-from sqlalchemy import Column
-from sqlalchemy.orm import declarative_base
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+print(dir(SQLAlchemy))
+
 
 app = Flask(__name__)
-Base = declarative_base()
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+db = flask_sqlalchemy.SQLAlchemy(app)
 
 
-class Cafe(Base):
-    __tablename__ = 'cafedata'
-    id = Column(db.Integer, primary_key=True)
-    name = Column(db.String, nullable=False)
-    address = Column(db.String, nullable=False)
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
 
-
-@app.route("/")
-def home():
-    return render_template('index.html')
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    def __repr__(self):
+        return '<User %r>' % self.username
